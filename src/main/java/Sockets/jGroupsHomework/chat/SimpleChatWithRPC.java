@@ -105,12 +105,13 @@ public class SimpleChatWithRPC extends ReceiverAdapter{
 	    while(true) {
 	    	String str = reader.nextLine();
 	    	MethodCall sendMessage = new MethodCall(this.getClass().getDeclaredMethod("printOut", String.class), str);
-	    	RspList<Void> responses = dispatcher.callRemoteMethods(null, sendMessage, RequestOptions.SYNC());
+	    	RspList<Integer> responses = dispatcher.callRemoteMethods(null, sendMessage, RequestOptions.SYNC());
 	    	System.out.println(responses);
 	    }
 	}
 	
-	public void printOut(String text) {
+	public Integer printOut(String text) {
 		System.out.println("New Message " + text);
+		return 10;
 	}
 }
