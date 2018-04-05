@@ -24,18 +24,18 @@ import org.jgroups.protocols.pbcast.STABLE;
 import org.jgroups.protocols.pbcast.STATE;
 import org.jgroups.stack.ProtocolStack;
 
-public class Test {
+public class SimpleChat {
 	
 	
 	private static final String CLASTER_NAME = "ChatCluster";
 	private JChannel channel;
-	public Test() {
+	public SimpleChat() {
 		// TODO Auto-generated constructor stub
 	}
 	
 	public static void main(String[] args) {
 		try {
-			new Test().runClient();
+			new SimpleChat().runClient();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -81,7 +81,8 @@ public class Test {
 		channel.connect(CLASTER_NAME); // polacz sie z grupa 
 	    channel.getState(null, 0); // uzyskaj stan po dolaczeniu do grupy (0 czyli czekaj az uzyskasz) (najczesciej od najstarszego klienta)
 	    
-	    Scanner reader = new Scanner(System.in);  // Reading from System.in
+	    @SuppressWarnings("resource")
+		Scanner reader = new Scanner(System.in);  // Reading from System.in
 	    while(true) {
 	    	String str = reader.nextLine();
 	    	Message msg = new Message(null,null,str);

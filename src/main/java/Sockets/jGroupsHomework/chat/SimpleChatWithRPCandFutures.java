@@ -2,6 +2,9 @@ package Sockets.jGroupsHomework.chat;
 
 import java.net.InetAddress;
 import java.util.Scanner;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+
 import org.jgroups.JChannel;
 import org.jgroups.Message;
 import org.jgroups.ReceiverAdapter;
@@ -27,20 +30,20 @@ import org.jgroups.protocols.pbcast.NAKACK2;
 import org.jgroups.protocols.pbcast.STABLE;
 import org.jgroups.protocols.pbcast.STATE;
 import org.jgroups.stack.ProtocolStack;
-import org.jgroups.util.RspList;
+import org.jgroups.util.NotifyingFuture;
 
-public class SimpleChatWithRPC extends ReceiverAdapter{
+public class SimpleChatWithRPCandFutures extends ReceiverAdapter{
 	
 	
 	private static final String CLASTER_NAME = "ChatCluster";
 	private JChannel channel;
-	public SimpleChatWithRPC() {
+	public SimpleChatWithRPCandFutures() {
 		// TODO Auto-generated constructor stub
 	}
 	
 	public static void main(String[] args) {
 		try {
-			new SimpleChatWithRPC().runClient();
+			new SimpleChatWithRPCandFutures().runClient();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -107,8 +110,19 @@ public class SimpleChatWithRPC extends ReceiverAdapter{
 	    while(true) {
 	    	String str = reader.nextLine();
 	    	MethodCall sendMessage = new MethodCall(this.getClass().getDeclaredMethod("printOut", String.class), str);
-	    	RspList<Integer> responses = dispatcher.callRemoteMethods(null, sendMessage, RequestOptions.SYNC());
-	    	System.out.println(responses);
+//	    	RspList<Integer> responses = dispatcher.callRemoteMethods(null, sendMessage, RequestOptions.SYNC());
+//	    	System.out.println(responses);
+	    	NotifyingFuture<Integer> response = dispatcher.callRemoteMethodWithFuture(channel.getAddress(), sendMessage, RequestOptions.SYNC());
+	    	
+	    	CompletableFuture.supplyAsync(() -> {
+	    		try {
+					return response.get();
+				} catch (InterruptedException | ExecutionException e) {
+					// TODO Auto-generated catch block
+					throw new RuntimeException(e);
+				}
+	    	}).thenAcceptAsync((result) -> System.out.println(result));
+//	    	System.out.println(response.get());
 	    }
 	}
 	

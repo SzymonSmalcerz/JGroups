@@ -50,7 +50,7 @@ public class SimpleChatWithView {
 		ProtocolStack stack = new ProtocolStack(); // hierarchia protokolow  
 		channel.setProtocolStack(stack); // ustaw stos protokolow dla naszego kanalu
 		
-		
+		 
 		UDP udp = new UDP(); // adres multicastowy taki by nie zaklocac pracy przez inne aplikacje
 		udp.setValue("mcast_group_addr", InetAddress.getByName("230.0.0.9"));
 		
@@ -87,7 +87,8 @@ public class SimpleChatWithView {
 		channel.connect(CLASTER_NAME); // polacz sie z grupa 
 	    channel.getState(null, 0); // uzyskaj stan po dolaczeniu do grupy (0 czyli czekaj az uzyskasz) (najczesciej od najstarszego klienta)
 	    
-	    Scanner reader = new Scanner(System.in);  // Reading from System.in
+	    @SuppressWarnings("resource")
+		Scanner reader = new Scanner(System.in);  // Reading from System.in
 	    while(true) {
 	    	String str = reader.nextLine();
 	    	Message msg = new Message(null,null,str);
